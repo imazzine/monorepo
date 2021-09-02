@@ -1,0 +1,12 @@
+/coverage
+/docs
+/jest
+/src
+/tsconfig
+.eslintrc.js
+.gitignore
+.jestrc.js
+.npmignore
+.prettierrc.js
+.travis.yml
+tsconfig.json
