@@ -2,4 +2,5 @@
  * [[include:README.md]]
  */
 
-export {};
+const mod = "mdln.io";
+export { mod };
