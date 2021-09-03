@@ -35,14 +35,16 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "mdln": "^0.0.0-alpha.3"
+    "mdln": "^0.0.0-alpha.3",
+    "commander": "^8.1.0"
   },
   "scripts": {
     "lint": "node ./node_modules/.bin/eslint -c ./.eslintrc.js 'src/**/*.ts'",
     "compile": "rm -rf lib && tsc -b ./tsconfig/cjs.json ./tsconfig/esm.json ./tsconfig/types.json && mv lib/types/src/* lib/types/ && rm -d lib/types/src && mv lib/cjs/src/* lib/cjs/ && rm -d lib/cjs/src && mv lib/esm/src/* lib/esm/ && rm -d lib/esm/src && find ./lib -type f -name *.tsbuildinfo -delete && find ./lib -type d -name tsconfig -delete",
     "test": "tsc -b ./tsconfig/jest.json && node_modules/.bin/jest --config ./.jestrc.js",
     "docs": "./node_modules/.bin/typedoc ./src/index.ts --out ./docs --includes ./",
-    "build": "npm run lint && npm run test -- --coverage && npm run compile && npm run docs"
+    "build": "npm run lint && npm run test -- --coverage && npm run compile && npm run docs",
+    "io": "node ./lib/cjs/index.js"
   },
   "types": "lib/types/index.d.ts",
   "module": "lib/esm/index.js",
