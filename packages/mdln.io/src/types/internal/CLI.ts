@@ -1,39 +1,38 @@
 import { Node } from "mdln";
 import { Command } from "commander";
 import { readFileSync } from "fs";
-import * as path from "path";
+import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
 /**
  * Command line interface node
  */
 class CLI extends Node {
-  #cert: string;
-  #key: string;
-  #host: string;
-  #port: string;
-  #io: string;
-  #nodes: string;
+  #host = "localhost";
+  #port = "8888";
+  #cert: string = resolveIoPath("cert/cert.pem");
+  #key: string = resolveIoPath("cert/key.pem");
+  #io: string = resolveIoPath();
+  #nodes: string = resolveIoPath();
   #program: Command = new Command();
 
   /**
    * CLI constructor
-   * @param argv CLI call arguments array
+   * @param a CLI call arguments array
    */
-  constructor(argv?: Array<string>) {
+  constructor(a?: Array<string>) {
     super();
-    const pth = path.resolve(__dirname, "../../../../package.json");
+    const pth = resolveIoPath("./package.json");
     const cnt = readFileSync(pth).toString();
     const pkg = JSON.parse(cnt) as { version: string };
     this.#program
       .version(pkg.version)
-      .option("--cert <path>", "HTTPS certificate file <path>", __dirname)
-      .option("--key <path>", "HTTPS certificate key file <path>", __dirname)
-      .option("--io <path>", "IO static <path>", __dirname)
-      .option("--nodes <path>", "Nodes static <path>", __dirname)
-      .option("--host <host>", "Web server <host>", "localhost")
-      .option("--port <port>", "Web server <port>", "8888")
-      .allowUnknownOption()
-      .parse(argv);
+      .option("--cert <path>", "HTTPS certificate file <path>", this.#cert)
+      .option("--key <path>", "HTTPS certificate key file <path>", this.#key)
+      .option("--io <path>", "IO static <path>", this.#io)
+      .option("--nodes <path>", "Nodes static <path>", this.#nodes)
+      .option("--host <host>", "Web server <host>", this.#host)
+      .option("--port <port>", "Web server <port>", this.#port)
+      .parse(a);
     this.#cert = this.#program.opts().cert as string;
     this.#key = this.#program.opts().key as string;
     this.#io = this.#program.opts().io as string;
