@@ -16,4 +16,4 @@ RUN ln -s . $(npm root --global)/mdln.io
 RUN ln -s ./lib/cjs/index.js $(npm bin --global)/mdln.io
 
 # Run tests.
-CMD ["npm", "run", "test"]
+CMD ["node_modules/.bin/jest", "--config", "./.jestrc.js"]
