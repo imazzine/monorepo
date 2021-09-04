@@ -5,7 +5,7 @@ install:
   - mkdir coverage
   - npm i
 script:
-  - docker run build
+  - npm run build
   - ./node_modules/.bin/coveralls < ./coverage/lcov.info
 deploy:
   provider: npm
