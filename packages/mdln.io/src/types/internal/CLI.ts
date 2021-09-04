@@ -24,7 +24,7 @@ class CLI extends Node {
     const pth = resolveIoPath("./package.json");
     const cnt = readFileSync(pth).toString();
     const pkg = JSON.parse(cnt) as { version: string };
-    this.#program
+    void this.#program
       .version(pkg.version)
       .option("--cert <path>", "HTTPS certificate file <path>", this.#cert)
       .option("--key <path>", "HTTPS certificate key file <path>", this.#key)
@@ -32,13 +32,15 @@ class CLI extends Node {
       .option("--nodes <path>", "Nodes static <path>", this.#nodes)
       .option("--host <host>", "Web server <host>", this.#host)
       .option("--port <port>", "Web server <port>", this.#port)
-      .parse(argv);
-    this.#cert = this.#program.opts().cert as string;
-    this.#key = this.#program.opts().key as string;
-    this.#io = this.#program.opts().io as string;
-    this.#nodes = this.#program.opts().nodes as string;
-    this.#host = this.#program.opts().host as string;
-    this.#port = this.#program.opts().port as string;
+      .parseAsync(argv)
+      .then(() => {
+        this.#cert = this.#program.opts().cert as string;
+        this.#key = this.#program.opts().key as string;
+        this.#io = this.#program.opts().io as string;
+        this.#nodes = this.#program.opts().nodes as string;
+        this.#host = this.#program.opts().host as string;
+        this.#port = this.#program.opts().port as string;
+      });
   }
 
   /**
