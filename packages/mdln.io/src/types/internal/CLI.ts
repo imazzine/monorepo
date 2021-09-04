@@ -17,9 +17,9 @@ class CLI extends Node {
 
   /**
    * CLI constructor
-   * @param a CLI call arguments array
+   * @param argv CLI call arguments array
    */
-  constructor(a?: Array<string>) {
+  constructor(argv?: Array<string>) {
     super();
     const pth = resolveIoPath("./package.json");
     const cnt = readFileSync(pth).toString();
@@ -32,7 +32,7 @@ class CLI extends Node {
       .option("--nodes <path>", "Nodes static <path>", this.#nodes)
       .option("--host <host>", "Web server <host>", this.#host)
       .option("--port <port>", "Web server <port>", this.#port)
-      .parse(a);
+      .parse(argv);
     this.#cert = this.#program.opts().cert as string;
     this.#key = this.#program.opts().key as string;
     this.#io = this.#program.opts().io as string;

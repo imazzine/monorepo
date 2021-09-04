@@ -12,6 +12,7 @@ describe("CLI node testsuit", () => {
   });
   test("CLI could be instantiated without args", () => {
     expect(() => {
+      process.argv = [];
       cli = new CLI();
     }).not.toThrow();
   });
@@ -32,6 +33,7 @@ describe("CLI node testsuit", () => {
   });
   test("CLI could be instantiated with args", () => {
     expect(() => {
+      process.argv = [];
       cli = new CLI([
         "node",
         "script",
