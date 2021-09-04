@@ -1,11 +1,17 @@
 language: node_js
 node_js:
   - "14"
+services:
+  - docker
+before_install:
+  - docker pull node:14-alpine3.10
 install:
   - mkdir coverage
   - npm ci
+  - tsc -b ./tsconfig/jest.json
+  - docker build -t mdln.io:test .
 script:
-  - npm run build
+  - docker run -v "$(pwd)"/coverage:/mdln.io/coverage -t mdln.io:test
   - ./node_modules/.bin/coveralls < ./coverage/lcov.info
   
 deploy:

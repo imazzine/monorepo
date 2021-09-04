@@ -24,7 +24,6 @@ class CLI extends Node {
     const pth = resolveIoPath("./package.json");
     const cnt = readFileSync(pth).toString();
     const pkg = JSON.parse(cnt) as { version: string };
-    console.log(process.argv);
     this.#program
       .version(pkg.version)
       .option("--cert <path>", "HTTPS certificate file <path>", this.#cert)
