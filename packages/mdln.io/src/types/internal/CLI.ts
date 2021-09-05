@@ -1,19 +1,46 @@
-import { Node } from "mdln";
-import { Command } from "commander";
+import * as minimist from "minimist";
 import { readFileSync } from "fs";
+import { Node } from "mdln";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
+
+enum Name {
+  CERT = "cert",
+  KEY = "key",
+  IO = "io",
+  NODES = "nodes",
+  HOST = "host",
+  PORT = "port",
+}
+
+enum Syntax {
+  CERT = "--cert <path>",
+  KEY = "--key <path>",
+  IO = "--io <path>",
+  NODES = "--nodes <path>",
+  HOST = "--host <host>",
+  PORT = "--port <port>",
+}
+
+enum Description {
+  CERT = "HTTPS certificate file <path>",
+  KEY = "HTTPS certificate key file <path>",
+  IO = "IO static <path>",
+  NODES = "Nodes static <path>",
+  HOST = "Web server <host>",
+  PORT = "Web server <port>",
+}
 
 /**
  * Command line interface node
  */
 class CLI extends Node {
-  #host = "localhost";
-  #port = "8888";
-  #cert: string = resolveIoPath("cert/cert.pem");
-  #key: string = resolveIoPath("cert/key.pem");
-  #io: string = resolveIoPath();
-  #nodes: string = resolveIoPath();
-  #program: Command = new Command();
+  #version: string;
+  #host: string;
+  #port: string;
+  #cert: string;
+  #key: string;
+  #io: string;
+  #nodes: string;
 
   /**
    * CLI constructor
@@ -24,21 +51,26 @@ class CLI extends Node {
     const pth = resolveIoPath("./package.json");
     const cnt = readFileSync(pth).toString();
     const pkg = JSON.parse(cnt) as { version: string };
-    this.#program
-      .version(pkg.version)
-      .option("--cert <path>", "HTTPS certificate file <path>", this.#cert)
-      .option("--key <path>", "HTTPS certificate key file <path>", this.#key)
-      .option("--io <path>", "IO static <path>", this.#io)
-      .option("--nodes <path>", "Nodes static <path>", this.#nodes)
-      .option("--host <host>", "Web server <host>", this.#host)
-      .option("--port <port>", "Web server <port>", this.#port)
-      .parse(argv);
-    this.#cert = this.#program.opts().cert as string;
-    this.#key = this.#program.opts().key as string;
-    this.#io = this.#program.opts().io as string;
-    this.#nodes = this.#program.opts().nodes as string;
-    this.#host = this.#program.opts().host as string;
-    this.#port = this.#program.opts().port as string;
+    const args = minimist(argv || [], {
+        string: [
+            Name.CERT,
+            Name.KEY,
+            Name.IO,
+            Name.NODES,
+            Name.HOST,
+            Name.PORT,
+        ],
+        unknown: (arg: string) => {
+            throw new TypeError(`Unknown CLI option: ${arg}`);
+        },
+    });
+    this.#version = pkg.version;
+    this.#cert = (args[Name.CERT] as string) || resolveIoPath("cert/cert.pem");
+    this.#key = (args[Name.KEY] as string) || resolveIoPath("cert/key.pem");
+    this.#io = (args[Name.IO] as string) || resolveIoPath();
+    this.#nodes = (args[Name.NODES] as string) || resolveIoPath();
+    this.#host = (args[Name.HOST] as string) || "localhost";
+    this.#port = (args[Name.PORT] as string) || "8888";
   }
 
   /**

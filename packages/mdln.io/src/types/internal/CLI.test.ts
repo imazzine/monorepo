@@ -33,8 +33,6 @@ describe("CLI node testsuit", () => {
   test("CLI could be instantiated with args", () => {
     expect(() => {
       cli = new CLI([
-        "node",
-        "script",
         "--cert",
         resolveIoPath("./cert"),
         "--key",
@@ -58,5 +56,20 @@ describe("CLI node testsuit", () => {
     expect(cli.nodes).toEqual(resolveIoPath("./nodes"));
     expect(cli.host).toEqual("0.0.0.0");
     expect(cli.port).toEqual("7777");
+  });
+  test("CLI could be disposed", () => {
+    expect(() => {
+      cli.dispose();
+    }).not.toThrow();
+    expect(cli.disposed).toBeTruthy();
+    expect(cli.disposed).toBeLessThanOrEqual(Date.now());
+  });
+  test("CLI should throw if unknown options are passed", () => {
+    expect(() => {
+      cli = new CLI([
+        "--throw",
+        "throw",
+      ]);
+    }).toThrow("Unknown CLI option: --throw");
   });
 });
