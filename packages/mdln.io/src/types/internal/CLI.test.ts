@@ -66,10 +66,7 @@ describe("CLI node testsuit", () => {
   });
   test("CLI should throw if unknown options are passed", () => {
     expect(() => {
-      cli = new CLI([
-        "--throw",
-        "throw",
-      ]);
+      cli = new CLI(["--throw", "throw"]);
     }).toThrow("Unknown CLI option: --throw");
   });
 });

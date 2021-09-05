@@ -52,17 +52,10 @@ class CLI extends Node {
     const cnt = readFileSync(pth).toString();
     const pkg = JSON.parse(cnt) as { version: string };
     const args = minimist(argv || [], {
-        string: [
-            Name.CERT,
-            Name.KEY,
-            Name.IO,
-            Name.NODES,
-            Name.HOST,
-            Name.PORT,
-        ],
-        unknown: (arg: string) => {
-            throw new TypeError(`Unknown CLI option: ${arg}`);
-        },
+      string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
+      unknown: (arg: string) => {
+        throw new TypeError(`Unknown CLI option: ${arg}`);
+      },
     });
     this.#version = pkg.version;
     this.#cert = (args[Name.CERT] as string) || resolveIoPath("cert/cert.pem");

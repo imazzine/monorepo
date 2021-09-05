@@ -3,6 +3,7 @@ node_js:
   - "14"
 install:
   - mkdir coverage
+  - nvm use
   - npm i
 script:
   - npm run build
