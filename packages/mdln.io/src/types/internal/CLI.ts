@@ -1,6 +1,7 @@
 import { stdout } from "process";
 import * as minimist from "minimist";
 import { readFileSync } from "fs";
+import * as colors from "colors";
 import { Node } from "mdln";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
@@ -63,7 +64,7 @@ class CLI extends Node {
       },
     });
     if (args[Name.HELP]) {
-      stdout.write(this.help());
+      this.help();
     } else {
       this.#version = pkg.version;
       this.#cert =
@@ -128,17 +129,33 @@ class CLI extends Node {
   /**
    * Returns CLI help message.
    */
-  public help(): string {
-    let result = "Usage: mdln.io [options]\n\n";
-    result += "Options:\n";
-    result += `\t${Syntax.HELP}\t\t${Description.HELP}\n`;
-    result += `\t${Syntax.CERT}\t${Description.CERT}\n`;
-    result += `\t${Syntax.KEY}\t${Description.KEY}\n`;
-    result += `\t${Syntax.IO}\t${Description.IO}\n`;
-    result += `\t${Syntax.NODES}\t${Description.NODES}\n`;
-    result += `\t${Syntax.HOST}\t${Description.HOST}\n`;
-    result += `\t${Syntax.PORT}\t${Description.PORT}\n`;
-    return result;
+  public help(): void {
+    let message = `\n${colors.blue("Usage:")} ${colors.green(
+      "mdln.io [options]",
+    )}\n\n`;
+    message += `${colors.blue("where")} ${colors.green(
+      "[options]",
+    )} ${colors.blue("are:")}\n\n`;
+    message += `\t${colors.green(Syntax.HELP)}\t\t${colors.blue(
+      Description.HELP,
+    )}\n`;
+    message += `\t${colors.green(Syntax.CERT)}\t${colors.blue(
+      Description.CERT,
+    )}\n`;
+    message += `\t${colors.green(Syntax.KEY)}\t${colors.blue(
+      Description.KEY,
+    )}\n`;
+    message += `\t${colors.green(Syntax.IO)}\t${colors.blue(Description.IO)}\n`;
+    message += `\t${colors.green(Syntax.NODES)}\t${colors.blue(
+      Description.NODES,
+    )}\n`;
+    message += `\t${colors.green(Syntax.HOST)}\t${colors.blue(
+      Description.HOST,
+    )}\n`;
+    message += `\t${colors.green(Syntax.PORT)}\t${colors.blue(
+      Description.PORT,
+    )}\n\n`;
+    stdout.write(message);
   }
 }
 

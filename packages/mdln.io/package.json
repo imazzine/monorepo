@@ -37,7 +37,8 @@
   },
   "dependencies": {
     "mdln": "^0.0.0-alpha.3",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "colors": "^1.4.0"
   },
   "scripts": {
     "lint": "node ./node_modules/.bin/eslint -c ./.eslintrc.js 'src/**/*.ts'",
