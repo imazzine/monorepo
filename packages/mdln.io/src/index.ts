@@ -4,4 +4,4 @@
  */
 
 import CLI from "./types/internal/CLI";
-export { CLI };
+new CLI(process.argv.slice(2));
