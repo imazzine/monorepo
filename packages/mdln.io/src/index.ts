@@ -3,6 +3,4 @@
  */
 
 import CLI from "./types/internal/CLI";
-export {
-    CLI,
-};
+export { CLI };
