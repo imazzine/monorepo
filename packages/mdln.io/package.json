@@ -51,6 +51,6 @@
   "module": "lib/esm/index.js",
   "main": "lib/cjs/index.js",
   "bin": {
-    "mdln.io": "lib/cjs/index.js"
+    "mdln.io": "bin.js"
   }
 }
