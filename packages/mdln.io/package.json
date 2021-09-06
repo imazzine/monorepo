@@ -1,6 +1,6 @@
 {
   "name": "mdln.io",
-  "version": "0.0.0-alpha.2",
+  "version": "0.0.0-alpha.3",
   "license": "Apache-2.0",
   "author": {
     "name": "Artem Lytvynov",
@@ -51,6 +51,6 @@
   "module": "lib/esm/index.js",
   "main": "lib/cjs/index.js",
   "bin": {
-    "mdln.io": "node ./lib/cjs/index.js"
+    "mdln.io": "lib/cjs/index.js"
   }
 }
