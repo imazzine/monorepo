@@ -7,5 +7,5 @@
  * @license Apache-2.0
  */
 
-import { CLI } from "./lib/cjs/index";
+const CLI = require("./lib/cjs/index").CLI;
 new CLI(process.argv.slice(2));
