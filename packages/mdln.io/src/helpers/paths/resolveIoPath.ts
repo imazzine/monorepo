@@ -7,6 +7,10 @@
 
 import { execSync } from "child_process";
 import * as path from "path";
+const root = execSync("npm root")
+  .toString()
+  .split("\n")[0]
+  .split("/node_modules")[0];
 
 /**
  * Resolve full path to the requested relatively to the IO root path.
@@ -14,10 +18,6 @@ import * as path from "path";
  * @returns Resolved IO path.
  */
 function resolveIoPath(s?: string): string {
-  const root = execSync("npm root")
-    .toString()
-    .split("\n")[0]
-    .split("/node_modules")[0];
   return path.resolve(root, s ? (s[0] === "/" ? `.${s}` : s) : "");
 }
 export default resolveIoPath;
