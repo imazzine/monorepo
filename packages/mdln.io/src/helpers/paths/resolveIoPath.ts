@@ -5,12 +5,8 @@
  * @license Apache-2.0
  */
 
-import { execSync } from "child_process";
 import * as path from "path";
-const root = execSync("npm root")
-  .toString()
-  .split("\n")[0]
-  .split("/node_modules")[0];
+const root = path.resolve(path.dirname(__filename), "./../../../../");
 
 /**
  * Resolve full path to the requested relatively to the IO root path.

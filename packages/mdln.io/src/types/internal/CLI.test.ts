@@ -1,96 +1,159 @@
 import { jest } from "@jest/globals";
-import { stdout } from "process";
+import * as process from "process";
+import { stdout, stderr } from "process";
 import { readFileSync } from "fs";
-import * as colors from "colors";
 import * as regular_import from "./CLI";
 import CLI from "./CLI";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
-describe("CLI node testsuit", () => {
-  let cli: CLI;
-  const out: (string | Uint8Array)[] = [];
-  const pth = resolveIoPath("./package.json");
-  const cnt = readFileSync(pth).toString();
-  const pkg = JSON.parse(cnt) as { version: string };
+const pth = resolveIoPath("./package.json");
+const cnt = readFileSync(pth).toString();
+const pkg = JSON.parse(cnt) as { version: string };
+let cli: CLI;
+let spyExit: jest.SpyInstance<never, [code?: number | undefined]>;
+let spyWrite: jest.SpyInstance<
+  boolean,
+  [
+    str: string | Uint8Array,
+    encoding?: BufferEncoding | undefined,
+    cb?: ((err?: Error | undefined) => void) | undefined,
+  ]
+>;
+let spyError: jest.SpyInstance<
+  boolean,
+  [
+    str: string | Uint8Array,
+    encoding?: BufferEncoding | undefined,
+    cb?: ((err?: Error | undefined) => void) | undefined,
+  ]
+>;
+
+describe("CLI", () => {
   beforeAll(() => {
-    const spy = jest.spyOn(stdout, "write");
-    spy.mockImplementation(function (v) {
-      out.push(v);
-      return true;
-    });
+    spyExit = jest.spyOn(process, "exit").mockImplementation(() => {
+      throw new Error("exit 1");
+    }) as jest.SpyInstance<never, [code?: number | undefined]>;
   });
+
+  afterAll(() => {
+    spyExit.mockRestore();
+  });
+
+  beforeEach(() => {
+    spyWrite = jest.spyOn(stdout, "write").mockImplementation(() => {
+      return true;
+    }) as jest.SpyInstance<
+      boolean,
+      [
+        str: string | Uint8Array,
+        encoding?: BufferEncoding | undefined,
+        cb?: ((err?: Error | undefined) => void) | undefined,
+      ]
+    >;
+    spyError = jest.spyOn(stderr, "write").mockImplementation(() => {
+      return true;
+    }) as jest.SpyInstance<
+      boolean,
+      [
+        str: string | Uint8Array,
+        encoding?: BufferEncoding | undefined,
+        cb?: ((err?: Error | undefined) => void) | undefined,
+      ]
+    >;
+  });
+
+  afterEach(() => {
+    spyWrite.mockRestore();
+    spyError.mockRestore();
+  });
+
   test("export is valid", () => {
     expect(regular_import).toBeDefined();
     expect(regular_import.default).toBeDefined();
     expect(CLI).toBeDefined();
     expect(CLI).toEqual(regular_import.default);
   });
-  test("CLI should throw if unknown options are passed", () => {
+
+  test("unknown options are throw", () => {
     expect(() => {
       cli = new CLI(["--throw", "throw"]);
-    }).toThrow("Unknown CLI option: --throw");
+    }).toThrow("exit 1");
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).toHaveBeenCalled();
   });
-  test("CLI --help option works", () => {
+
+  test("--help returns a message", () => {
     expect(() => {
       cli = new CLI(["--help"]);
     }).not.toThrow();
-    expect(out.length).toEqual(1);
-    expect(out[0].length).toBeGreaterThan(0);
+    expect(spyWrite).toHaveBeenCalled();
+    expect(spyError).not.toHaveBeenCalled();
   });
-  test("CLI without args works", () => {
+
+  test("no parameters are required", () => {
     expect(() => {
       cli = new CLI();
     }).not.toThrow();
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).not.toHaveBeenCalled();
   });
-  test("defaults are valid", () => {
+
+  test("default values are valid", () => {
     expect(cli.version).toEqual(pkg.version);
-    expect(cli.cert).toEqual(resolveIoPath("cert/cert.pem"));
+    expect(cli.cert).toEqual(
+      readFileSync(resolveIoPath("cert/cert.pem")).toString(),
+    );
     expect(cli.key).toEqual(resolveIoPath("cert/key.pem"));
     expect(cli.io).toEqual(resolveIoPath());
     expect(cli.nodes).toEqual(resolveIoPath());
     expect(cli.host).toEqual("localhost");
     expect(cli.port).toEqual("8888");
   });
-  test("CLI could be disposed", () => {
+
+  test("node could be disposed", () => {
     expect(() => {
       cli.dispose();
     }).not.toThrow();
     expect(cli.disposed).toBeTruthy();
     expect(cli.disposed).toBeLessThanOrEqual(Date.now());
   });
-  test("CLI could be instantiated with args", () => {
+
+  test("throws if --cert <path> is missed", () => {
     expect(() => {
-      cli = new CLI([
-        "--cert",
-        resolveIoPath("./cert"),
-        "--key",
-        resolveIoPath("./key"),
-        "--io",
-        resolveIoPath("./io"),
-        "--nodes",
-        resolveIoPath("./nodes"),
-        "--host",
-        "0.0.0.0",
-        "--port",
-        "7777",
-      ]);
-    }).not.toThrow();
+      cli = new CLI(["--cert"]);
+    }).toThrow("exit 1");
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).toHaveBeenCalled();
   });
-  test("defaults are valid", () => {
+
+  test("throws if --cert <path> is a folder identifier", () => {
+    expect(() => {
+      cli = new CLI(["--cert", "/"]);
+    }).toThrow("exit 1");
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).toHaveBeenCalled();
+  });
+
+  test("throws if --cert <path> is not an existing file identifier", () => {
+    expect(() => {
+      cli = new CLI(["--cert", "/cert.pem"]);
+    }).toThrow("exit 1");
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).toHaveBeenCalled();
+  });
+
+  test("works if --cert <path> is an existing file identifier", () => {
+    expect(() => {
+      cli = new CLI(["--cert", resolveIoPath("./cert/cert.pem")]);
+    }).not.toThrow();
+    expect(spyWrite).not.toHaveBeenCalled();
+    expect(spyError).not.toHaveBeenCalled();
     expect(cli.version).toEqual(pkg.version);
-    expect(cli.disposed).toBeFalsy();
-    expect(cli.cert).toEqual(resolveIoPath("./cert"));
-    expect(cli.key).toEqual(resolveIoPath("./key"));
-    expect(cli.io).toEqual(resolveIoPath("./io"));
-    expect(cli.nodes).toEqual(resolveIoPath("./nodes"));
-    expect(cli.host).toEqual("0.0.0.0");
-    expect(cli.port).toEqual("7777");
-  });
-  test("CLI could be disposed", () => {
+    expect(cli.cert).toEqual(
+      readFileSync(resolveIoPath("cert/cert.pem")).toString(),
+    );
     expect(() => {
       cli.dispose();
     }).not.toThrow();
-    expect(cli.disposed).toBeTruthy();
-    expect(cli.disposed).toBeLessThanOrEqual(Date.now());
   });
 });

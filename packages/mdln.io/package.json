@@ -1,6 +1,6 @@
 {
   "name": "mdln.io",
-  "version": "0.0.0-alpha.5",
+  "version": "0.0.0-alpha.6",
   "license": "Apache-2.0",
   "author": {
     "name": "Artem Lytvynov",
@@ -41,12 +41,12 @@
     "colors": "^1.4.0"
   },
   "scripts": {
+    "recert": "rm -rf cert && mkdir cert && openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert/key.pem -subj \"/C=UA/ST=Kyiv Region/L=Kyiv/O=imazzine!/CN=*.*/\" -out cert/cert.pem",
     "lint": "node ./node_modules/.bin/eslint -c ./.eslintrc.js 'src/**/*.ts'",
-    "compile": "rm -rf lib && tsc -b ./tsconfig/cjs.json ./tsconfig/esm.json ./tsconfig/types.json && mv lib/types/src/* lib/types/ && rm -d lib/types/src && mv lib/cjs/src/* lib/cjs/ && rm -d lib/cjs/src && mv lib/esm/src/* lib/esm/ && rm -d lib/esm/src && find ./lib -type f -name *.tsbuildinfo -delete && find ./lib -type d -name tsconfig -delete",
+    "compile": "rm -rf lib && tsc -b ./tsconfig/cjs.json ./tsconfig/types.json && mv lib/types/src/* lib/types/ && rm -d lib/types/src && mv lib/cjs/src/* lib/cjs/ && rm -d lib/cjs/src && find ./lib -type f -name *.tsbuildinfo -delete && find ./lib -type d -name tsconfig -delete",
     "test": "tsc -b ./tsconfig/jest.json && node_modules/.bin/jest --config ./.jestrc.js",
     "docs": "./node_modules/.bin/typedoc ./src/index.ts --out ./docs --includes ./",
-    "build": "npm run lint && npm run test -- --coverage && npm run compile && npm run docs",
-    "cert": "rm -rf cert && mkdir cert && openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert/key.pem -out cert/cert.pem"
+    "build": "npm run lint && npm run test -- --coverage && npm run compile && npm run docs"
   },
   "types": "lib/types/index.d.ts",
   "module": "lib/esm/index.js",
