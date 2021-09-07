@@ -67,57 +67,59 @@ describe("CLI", () => {
     spyError.mockRestore();
   });
 
-  test("export is valid", () => {
-    expect(regular_import).toBeDefined();
-    expect(regular_import.default).toBeDefined();
-    expect(CLI).toBeDefined();
-    expect(CLI).toEqual(regular_import.default);
-  });
+  describe("general", () => {
+    test("export is valid", () => {
+      expect(regular_import).toBeDefined();
+      expect(regular_import.default).toBeDefined();
+      expect(CLI).toBeDefined();
+      expect(CLI).toEqual(regular_import.default);
+    });
 
-  test("unknown options are throw", () => {
-    expect(() => {
-      cli = new CLI(["--throw", "throw"]);
-    }).toThrow("exit 1");
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).toHaveBeenCalled();
-  });
+    test("unknown options are throw", () => {
+      expect(() => {
+        cli = new CLI(["--throw", "throw"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
 
-  test("--help returns a message", () => {
-    expect(() => {
-      cli = new CLI(["--help"]);
-    }).not.toThrow();
-    expect(spyWrite).toHaveBeenCalled();
-    expect(spyError).not.toHaveBeenCalled();
-  });
+    test("--help returns a message", () => {
+      expect(() => {
+        cli = new CLI(["--help"]);
+      }).not.toThrow();
+      expect(spyWrite).toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+    });
 
-  test("no parameters are required", () => {
-    expect(() => {
-      cli = new CLI();
-    }).not.toThrow();
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).not.toHaveBeenCalled();
-  });
+    test("no parameters are required", () => {
+      expect(() => {
+        cli = new CLI();
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+    });
 
-  test("default values are valid", () => {
-    expect(cli.version).toEqual(pkg.version);
-    expect(cli.cert).toEqual(
-      readFileSync(resolveIoPath("cert/cert.pem")).toString(),
-    );
-    expect(cli.key).toEqual(
-      readFileSync(resolveIoPath("cert/key.pem")).toString(),
-    );
-    expect(cli.io).toEqual(resolveIoPath());
-    expect(cli.nodes).toEqual(resolveIoPath());
-    expect(cli.host).toEqual("localhost");
-    expect(cli.port).toEqual("8888");
-  });
+    test("default values are valid", () => {
+      expect(cli.version).toEqual(pkg.version);
+      expect(cli.cert).toEqual(
+        readFileSync(resolveIoPath("cert/cert.pem")).toString(),
+      );
+      expect(cli.key).toEqual(
+        readFileSync(resolveIoPath("cert/key.pem")).toString(),
+      );
+      expect(cli.io).toEqual(resolveIoPath());
+      expect(cli.nodes).toEqual(resolveIoPath());
+      expect(cli.host).toEqual("localhost");
+      expect(cli.port).toEqual("8888");
+    });
 
-  test("node could be disposed", () => {
-    expect(() => {
-      cli.dispose();
-    }).not.toThrow();
-    expect(cli.disposed).toBeTruthy();
-    expect(cli.disposed).toBeLessThanOrEqual(Date.now());
+    test("node could be disposed", () => {
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+      expect(cli.disposed).toBeTruthy();
+      expect(cli.disposed).toBeLessThanOrEqual(Date.now());
+    });
   });
 
   describe("--cert option", () => {
@@ -240,6 +242,44 @@ describe("CLI", () => {
       expect(spyError).not.toHaveBeenCalled();
       expect(cli.version).toEqual(pkg.version);
       expect(cli.host).toEqual("0.0.0.0");
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+    });
+  });
+
+  describe("--port option", () => {
+    test("throws if <port> is missed", () => {
+      expect(() => {
+        cli = new CLI(["--port"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if <port> is a string", () => {
+      expect(() => {
+        cli = new CLI(["--port", "string"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if <port> is a wrong number", () => {
+      expect(() => {
+        cli = new CLI(["--port", "111111111111"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("works if <port> is a valid number", () => {
+      expect(() => {
+        cli = new CLI(["--port", "9999"]);
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+      expect(cli.port).toEqual("9999");
       expect(() => {
         cli.dispose();
       }).not.toThrow();

@@ -13,6 +13,8 @@ const IP_regex =
   /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
 const HOST_regex =
   /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
+const PORT_regex =
+  /^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
 
 /**
  * CLI commands list.
@@ -131,7 +133,7 @@ class CLI extends Node {
       this._help();
     } else {
       this._host(args[Name.HOST]);
-      this.#port = (args[Name.PORT] as string) || "8888";
+      this._port(args[Name.PORT]);
       this._cert(args[Name.CERT]);
       this._key(args[Name.KEY]);
       this.#io = (args[Name.IO] as string) || resolveIoPath();
@@ -164,6 +166,12 @@ class CLI extends Node {
     message += `\t${colors.bold.green(Syntax.HELP)}\t\t${colors.white(
       Description.HELP,
     )}\n`;
+    message += `\t${colors.bold.green(Syntax.HOST)}\t${colors.white(
+      Description.HOST,
+    )}\n`;
+    message += `\t${colors.bold.green(Syntax.PORT)}\t${colors.white(
+      Description.PORT,
+    )}\n`;
     message += `\t${colors.bold.green(Syntax.CERT)}\t${colors.white(
       Description.CERT,
     )}\n`;
@@ -175,12 +183,6 @@ class CLI extends Node {
     )}\n`;
     message += `\t${colors.bold.green(Syntax.NODES)}\t${colors.white(
       Description.NODES,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.HOST)}\t${colors.white(
-      Description.HOST,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.PORT)}\t${colors.white(
-      Description.PORT,
     )}\n\n`;
     stdout.write(message);
   }
@@ -210,7 +212,7 @@ class CLI extends Node {
       exist = false;
     }
     if (!exist) {
-      this._error(`file not found: ${colors.bold(p)}`);
+      this._error(`file not found on the given path: ${colors.bold(p)}`);
     }
     return p;
   }
@@ -221,12 +223,26 @@ class CLI extends Node {
   private _checkHost(h: string): string {
     if (!IP_regex.test(h) && !HOST_regex.test(h)) {
       this._error(
-        `host should be a valid (RFC1123) hostname or IPv4 address, not a: ${colors.bold(
+        `host should be a valid RFC1123 hostname or an IPv4, not a given: ${colors.bold(
           h,
         )}`,
       );
     }
     return h;
+  }
+
+  /**
+   * Determines, whether passed parameter is a valid port or not.
+   */
+  private _checkPort(p: string): string {
+    if (!PORT_regex.test(p)) {
+      this._error(
+        `port should be a number between 0 and 65535, not a given: ${colors.bold(
+          p,
+        )}`,
+      );
+    }
+    return p;
   }
 
   /**
@@ -255,6 +271,16 @@ class CLI extends Node {
       this._error(`required ${colors.bold("<host>")} is missing`);
     }
     this.#host = this._checkHost(host || "localhost");
+  }
+
+  /**
+   * Processing of the port property.
+   */
+  private _port(port?: string): void {
+    if (typeof port === "string" && port.length === 0) {
+      this._error(`required ${colors.bold("<port>")} is missing`);
+    }
+    this.#port = this._checkPort(port || "8888");
   }
 }
 
