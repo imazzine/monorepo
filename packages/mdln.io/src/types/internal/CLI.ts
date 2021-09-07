@@ -9,6 +9,11 @@ const pth = resolveIoPath("./package.json");
 const cnt = readFileSync(pth).toString();
 const pkg = JSON.parse(cnt) as { version: string };
 
+const IP_regex =
+  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+const HOST_regex =
+  /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
+
 /**
  * CLI commands list.
  */
@@ -125,18 +130,17 @@ class CLI extends Node {
     if (args[Name.HELP]) {
       this._help();
     } else {
+      this._host(args[Name.HOST]);
+      this.#port = (args[Name.PORT] as string) || "8888";
       this._cert(args[Name.CERT]);
-      this.#key = (args[Name.KEY] as string) || resolveIoPath("cert/key.pem");
+      this._key(args[Name.KEY]);
       this.#io = (args[Name.IO] as string) || resolveIoPath();
       this.#nodes = (args[Name.NODES] as string) || resolveIoPath();
-      this.#host = (args[Name.HOST] as string) || "localhost";
-      this.#port = (args[Name.PORT] as string) || "8888";
     }
   }
 
   /**
    * Write error message to the stderr and exit with error code 1.
-   * @param err Error message.
    */
   private _error(err: string): void {
     let message = `\n${colors.red(`Error: ${err}`)}\n\n`;
@@ -212,12 +216,45 @@ class CLI extends Node {
   }
 
   /**
-   * Process cert property.
+   * Determines, whether passed parameter is a valid hostname or not.
+   */
+  private _checkHost(h: string): string {
+    if (!IP_regex.test(h) && !HOST_regex.test(h)) {
+      this._error(
+        `host should be a valid (RFC1123) hostname or IPv4 address, not a: ${colors.bold(
+          h,
+        )}`,
+      );
+    }
+    return h;
+  }
+
+  /**
+   * Processing of the cert property.
    */
   private _cert(pth?: string): void {
     pth = this._checkPath(pth);
     pth = this._checkFile(pth || resolveIoPath("cert/cert.pem"));
     this.#cert = readFileSync(pth).toString();
+  }
+
+  /**
+   * Processing of the key property.
+   */
+  private _key(pth?: string): void {
+    pth = this._checkPath(pth);
+    pth = this._checkFile(pth || resolveIoPath("cert/key.pem"));
+    this.#key = readFileSync(pth).toString();
+  }
+
+  /**
+   * Processing of the host property.
+   */
+  private _host(host?: string): void {
+    if (typeof host === "string" && host.length === 0) {
+      this._error(`required ${colors.bold("<host>")} is missing`);
+    }
+    this.#host = this._checkHost(host || "localhost");
   }
 }
 

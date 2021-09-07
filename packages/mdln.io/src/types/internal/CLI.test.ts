@@ -103,7 +103,9 @@ describe("CLI", () => {
     expect(cli.cert).toEqual(
       readFileSync(resolveIoPath("cert/cert.pem")).toString(),
     );
-    expect(cli.key).toEqual(resolveIoPath("cert/key.pem"));
+    expect(cli.key).toEqual(
+      readFileSync(resolveIoPath("cert/key.pem")).toString(),
+    );
     expect(cli.io).toEqual(resolveIoPath());
     expect(cli.nodes).toEqual(resolveIoPath());
     expect(cli.host).toEqual("localhost");
@@ -118,42 +120,129 @@ describe("CLI", () => {
     expect(cli.disposed).toBeLessThanOrEqual(Date.now());
   });
 
-  test("throws if --cert <path> is missed", () => {
-    expect(() => {
-      cli = new CLI(["--cert"]);
-    }).toThrow("exit 1");
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).toHaveBeenCalled();
+  describe("--cert option", () => {
+    test("throws if --cert <path> is missed", () => {
+      expect(() => {
+        cli = new CLI(["--cert"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if --cert <path> is a folder identifier", () => {
+      expect(() => {
+        cli = new CLI(["--cert", "/"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if --cert <path> is not an existing file identifier", () => {
+      expect(() => {
+        cli = new CLI(["--cert", "/cert.pem"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("works if --cert <path> is an existing file identifier", () => {
+      expect(() => {
+        cli = new CLI(["--cert", resolveIoPath("./cert/cert.pem")]);
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+      expect(cli.version).toEqual(pkg.version);
+      expect(cli.cert).toEqual(
+        readFileSync(resolveIoPath("cert/cert.pem")).toString(),
+      );
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+    });
   });
 
-  test("throws if --cert <path> is a folder identifier", () => {
-    expect(() => {
-      cli = new CLI(["--cert", "/"]);
-    }).toThrow("exit 1");
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).toHaveBeenCalled();
+  describe("--key option", () => {
+    test("throws if --key <path> is missed", () => {
+      expect(() => {
+        cli = new CLI(["--key"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if --key <path> is a folder identifier", () => {
+      expect(() => {
+        cli = new CLI(["--key", "/"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("throws if --key <path> is not an existing file identifier", () => {
+      expect(() => {
+        cli = new CLI(["--key", "/key.pem"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("works if --key <path> is an existing file identifier", () => {
+      expect(() => {
+        cli = new CLI(["--key", resolveIoPath("./cert/key.pem")]);
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+      expect(cli.version).toEqual(pkg.version);
+      expect(cli.key).toEqual(
+        readFileSync(resolveIoPath("cert/key.pem")).toString(),
+      );
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+    });
   });
 
-  test("throws if --cert <path> is not an existing file identifier", () => {
-    expect(() => {
-      cli = new CLI(["--cert", "/cert.pem"]);
-    }).toThrow("exit 1");
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).toHaveBeenCalled();
-  });
+  describe("--host option", () => {
+    test("throws if <host> is missed", () => {
+      expect(() => {
+        cli = new CLI(["--host"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
 
-  test("works if --cert <path> is an existing file identifier", () => {
-    expect(() => {
-      cli = new CLI(["--cert", resolveIoPath("./cert/cert.pem")]);
-    }).not.toThrow();
-    expect(spyWrite).not.toHaveBeenCalled();
-    expect(spyError).not.toHaveBeenCalled();
-    expect(cli.version).toEqual(pkg.version);
-    expect(cli.cert).toEqual(
-      readFileSync(resolveIoPath("cert/cert.pem")).toString(),
-    );
-    expect(() => {
-      cli.dispose();
-    }).not.toThrow();
+    test("throws if <host> is a wrong string", () => {
+      expect(() => {
+        cli = new CLI(["--host", "@!#"]);
+      }).toThrow("exit 1");
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    test("works if <host> is a valid hostname", () => {
+      expect(() => {
+        cli = new CLI(["--host", "imazzine"]);
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+      expect(cli.version).toEqual(pkg.version);
+      expect(cli.host).toEqual("imazzine");
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+    });
+
+    test("works if <host> is a valid IP", () => {
+      expect(() => {
+        cli = new CLI(["--host", "0.0.0.0"]);
+      }).not.toThrow();
+      expect(spyWrite).not.toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+      expect(cli.version).toEqual(pkg.version);
+      expect(cli.host).toEqual("0.0.0.0");
+      expect(() => {
+        cli.dispose();
+      }).not.toThrow();
+    });
   });
 });
