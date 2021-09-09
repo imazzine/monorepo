@@ -42,6 +42,7 @@
   },
   "scripts": {
     "recert": "rm -rf cert && mkdir cert && openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert/key.pem -subj \"/C=UA/ST=Kyiv Region/L=Kyiv/O=imazzine!/CN=*.*/\" -out cert/cert.pem",
+    "globalize": "rm -rf $(npm root --global)/mdln.io && rm -rf $(npm bin --global)/mdln.io && ln -s $(pwd) $(npm root --global)/mdln.io && ln -s $(pwd)/bin.js $(npm bin --global)/mdln.io",
     "lint": "node ./node_modules/.bin/eslint -c ./.eslintrc.js 'src/**/*.ts'",
     "compile": "rm -rf lib && tsc -b ./tsconfig/cjs.json ./tsconfig/types.json && mv lib/types/src/* lib/types/ && rm -d lib/types/src && mv lib/cjs/src/* lib/cjs/ && rm -d lib/cjs/src && find ./lib -type f -name *.tsbuildinfo -delete && find ./lib -type d -name tsconfig -delete",
     "test": "tsc -b ./tsconfig/jest.json && node_modules/.bin/jest --config ./.jestrc.js",
