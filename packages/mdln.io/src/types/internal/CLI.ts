@@ -21,6 +21,7 @@ const PORT_regex =
  */
 enum Name {
   HELP = "help",
+  VERSION = "version",
   CERT = "cert",
   KEY = "key",
   IO = "io",
@@ -34,6 +35,7 @@ enum Name {
  */
 enum Syntax {
   HELP = "--help",
+  VERSION = "--version",
   CERT = "--cert <path>",
   KEY = "--key <path>",
   IO = "--io <path>",
@@ -47,6 +49,7 @@ enum Syntax {
  */
 enum Description {
   HELP = "display this message",
+  VERSION = "version information",
   CERT = "HTTPS certificate file absolute <path>",
   KEY = "HTTPS certificate key file absolute <path>",
   IO = "IO static absolute <path>",
@@ -123,7 +126,7 @@ class CLI extends Node {
   constructor(argv?: Array<string>) {
     super();
     const args = minimist(argv || [], {
-      boolean: [Name.HELP],
+      boolean: [Name.HELP, Name.VERSION],
       string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
       unknown: ((arg: string) => {
         this._error(`unknown option ${colors.bold(arg)}`);
@@ -131,6 +134,8 @@ class CLI extends Node {
     });
     if (args[Name.HELP]) {
       this._help();
+    } else if (args[Name.VERSION]) {
+      this._version();
     } else {
       this._host(args[Name.HOST]);
       this._port(args[Name.PORT]);
@@ -166,6 +171,9 @@ class CLI extends Node {
     message += `\t${colors.bold.green(Syntax.HELP)}\t\t${colors.white(
       Description.HELP,
     )}\n`;
+    message += `\t${colors.bold.green(Syntax.VERSION)}\t${colors.white(
+      Description.VERSION,
+    )}\n`;
     message += `\t${colors.bold.green(Syntax.HOST)}\t${colors.white(
       Description.HOST,
     )}\n`;
@@ -184,6 +192,14 @@ class CLI extends Node {
     message += `\t${colors.bold.green(Syntax.NODES)}\t${colors.white(
       Description.NODES,
     )}\n\n`;
+    stdout.write(message);
+  }
+
+  /**
+   * Returns CLI version info.
+   */
+  private _version(): void {
+    const message = `\n${colors.bold.white(`${this.version}`)}\n\n`;
     stdout.write(message);
   }
 

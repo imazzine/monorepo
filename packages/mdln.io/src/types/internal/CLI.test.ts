@@ -91,6 +91,14 @@ describe("CLI", () => {
       expect(spyError).not.toHaveBeenCalled();
     });
 
+    test("--version returns a message", () => {
+      expect(() => {
+        cli = new CLI(["--version"]);
+      }).not.toThrow();
+      expect(spyWrite).toHaveBeenCalled();
+      expect(spyError).not.toHaveBeenCalled();
+    });
+
     test("no parameters are required", () => {
       expect(() => {
         cli = new CLI();
