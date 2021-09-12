@@ -30,8 +30,11 @@ let spyError: jest.SpyInstance<
 
 describe("CLI", () => {
   beforeAll(() => {
-    spyExit = jest.spyOn(process, "exit").mockImplementation(() => {
-      throw new Error("exit 1");
+    spyExit = jest.spyOn(process, "exit").mockImplementation((code) => {
+      if (code && typeof code === "number" && code > 0) {
+        throw new Error("exit 1");
+      }
+      throw new Error("exit 0");
     }) as jest.SpyInstance<never, [code?: number | undefined]>;
   });
 
@@ -86,7 +89,7 @@ describe("CLI", () => {
     test("--help returns a message", () => {
       expect(() => {
         cli = new CLI(["--help"]);
-      }).not.toThrow();
+      }).toThrow("exit 0");
       expect(spyWrite).toHaveBeenCalled();
       expect(spyError).not.toHaveBeenCalled();
     });
@@ -94,7 +97,7 @@ describe("CLI", () => {
     test("--version returns a message", () => {
       expect(() => {
         cli = new CLI(["--version"]);
-      }).not.toThrow();
+      }).toThrow("exit 0");
       expect(spyWrite).toHaveBeenCalled();
       expect(spyError).not.toHaveBeenCalled();
     });
@@ -109,16 +112,12 @@ describe("CLI", () => {
 
     test("default values are valid", () => {
       expect(cli.version).toEqual(pkg.version);
-      expect(cli.cert).toEqual(
-        readFileSync(resolveIoPath("cert/cert.pem")).toString(),
-      );
-      expect(cli.key).toEqual(
-        readFileSync(resolveIoPath("cert/key.pem")).toString(),
-      );
+      expect(cli.cert).toEqual(resolveIoPath("cert/cert.pem"));
+      expect(cli.key).toEqual(resolveIoPath("cert/key.pem"));
       expect(cli.io).toEqual(resolveIoPath());
       expect(cli.nodes).toEqual(resolveIoPath());
       expect(cli.host).toEqual("localhost");
-      expect(cli.port).toEqual("8888");
+      expect(cli.port).toEqual(8888);
     });
 
     test("node could be disposed", () => {
@@ -162,9 +161,7 @@ describe("CLI", () => {
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).not.toHaveBeenCalled();
       expect(cli.version).toEqual(pkg.version);
-      expect(cli.cert).toEqual(
-        readFileSync(resolveIoPath("cert/cert.pem")).toString(),
-      );
+      expect(cli.cert).toEqual(resolveIoPath("cert/cert.pem"));
       expect(() => {
         cli.dispose();
       }).not.toThrow();
@@ -203,9 +200,7 @@ describe("CLI", () => {
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).not.toHaveBeenCalled();
       expect(cli.version).toEqual(pkg.version);
-      expect(cli.key).toEqual(
-        readFileSync(resolveIoPath("cert/key.pem")).toString(),
-      );
+      expect(cli.key).toEqual(resolveIoPath("cert/key.pem"));
       expect(() => {
         cli.dispose();
       }).not.toThrow();
@@ -287,7 +282,7 @@ describe("CLI", () => {
       }).not.toThrow();
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).not.toHaveBeenCalled();
-      expect(cli.port).toEqual("9999");
+      expect(cli.port).toEqual(9999);
       expect(() => {
         cli.dispose();
       }).not.toThrow();

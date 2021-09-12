@@ -38,7 +38,8 @@
   "dependencies": {
     "mdln": "^0.0.0-alpha.3",
     "minimist": "^1.2.5",
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v19.3.0"
   },
   "scripts": {
     "recert": "rm -rf cert && mkdir cert && openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert/key.pem -subj \"/C=UA/ST=Kyiv Region/L=Kyiv/O=imazzine!/CN=*.*/\" -out cert/cert.pem",

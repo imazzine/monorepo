@@ -59,73 +59,73 @@ enum Description {
 }
 
 /**
- * CLI node.
+ * Command Line Interface node.
  */
 class CLI extends Node {
-  #version = pkg.version;
-  #host = "n/a";
-  #port = "n/a";
-  #cert = "n/a";
-  #key = "n/a";
-  #io = "n/a";
-  #nodes = "n/a";
+  #_version = pkg.version;
+  #_host = "n/a";
+  #_port = NaN;
+  #_cert = "n/a";
+  #_key = "n/a";
+  #_io = "n/a";
+  #_nodes = "n/a";
 
   /**
    * mdln.io version. Equal to the package.json.version field value.
    */
   get version(): string {
-    return this.#version;
+    return this.#_version;
   }
 
   /**
    * HTTPS certificate file path
    */
   get cert(): string {
-    return this.#cert;
+    return this.#_cert;
   }
 
   /**
    * HTTPS certificate key file path
    */
   get key(): string {
-    return this.#key;
+    return this.#_key;
   }
 
   /**
    * Web server host
    */
   get host(): string {
-    return this.#host;
+    return this.#_host;
   }
 
   /**
    * Web server port
    */
-  get port(): string {
-    return this.#port;
+  get port(): number {
+    return this.#_port;
   }
 
   /**
    * IO static path
    */
   get io(): string {
-    return this.#io;
+    return this.#_io;
   }
 
   /**
    * Nodes static path
    */
   get nodes(): string {
-    return this.#nodes;
+    return this.#_nodes;
   }
 
   /**
    * CLI constructor.
-   * @param argv CLI call arguments array
+   * @param CLI_options Options array (argv formatted)
    */
-  constructor(argv?: Array<string>) {
+  constructor(CLI_options?: Array<string>) {
     super();
-    const args = minimist(argv || [], {
+    const args = minimist(CLI_options || [], {
       boolean: [Name.HELP, Name.VERSION],
       string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
       unknown: ((arg: string) => {
@@ -141,8 +141,8 @@ class CLI extends Node {
       this._port(args[Name.PORT]);
       this._cert(args[Name.CERT]);
       this._key(args[Name.KEY]);
-      this.#io = (args[Name.IO] as string) || resolveIoPath();
-      this.#nodes = (args[Name.NODES] as string) || resolveIoPath();
+      this.#_io = (args[Name.IO] as string) || resolveIoPath();
+      this.#_nodes = (args[Name.NODES] as string) || resolveIoPath();
     }
   }
 
@@ -193,6 +193,7 @@ class CLI extends Node {
       Description.NODES,
     )}\n\n`;
     stdout.write(message);
+    process.exit(0);
   }
 
   /**
@@ -201,6 +202,7 @@ class CLI extends Node {
   private _version(): void {
     const message = `\n${colors.bold.white(`${this.version}`)}\n\n`;
     stdout.write(message);
+    process.exit(0);
   }
 
   /**
@@ -267,7 +269,7 @@ class CLI extends Node {
   private _cert(pth?: string): void {
     pth = this._checkPath(pth);
     pth = this._checkFile(pth || resolveIoPath("cert/cert.pem"));
-    this.#cert = readFileSync(pth).toString();
+    this.#_cert = pth;
   }
 
   /**
@@ -276,7 +278,7 @@ class CLI extends Node {
   private _key(pth?: string): void {
     pth = this._checkPath(pth);
     pth = this._checkFile(pth || resolveIoPath("cert/key.pem"));
-    this.#key = readFileSync(pth).toString();
+    this.#_key = pth;
   }
 
   /**
@@ -286,7 +288,7 @@ class CLI extends Node {
     if (typeof host === "string" && host.length === 0) {
       this._error(`required ${colors.bold("<host>")} is missing`);
     }
-    this.#host = this._checkHost(host || "localhost");
+    this.#_host = this._checkHost(host || "localhost");
   }
 
   /**
@@ -296,7 +298,7 @@ class CLI extends Node {
     if (typeof port === "string" && port.length === 0) {
       this._error(`required ${colors.bold("<port>")} is missing`);
     }
-    this.#port = this._checkPort(port || "8888");
+    this.#_port = parseInt(this._checkPort(port || "8888"));
   }
 }
 

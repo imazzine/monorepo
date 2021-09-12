@@ -3,4 +3,5 @@
  */
 
 import CLI from "./types/internal/CLI";
-export { CLI };
+import NI from "./types/internal/NI";
+export { CLI, NI };

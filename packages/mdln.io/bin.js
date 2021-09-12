@@ -8,4 +8,9 @@
  */
 
 const CLI = require("./lib/cjs/index").CLI;
-new CLI(process.argv.slice(2));
+const NI = require("./lib/cjs/index").NI;
+const cli = new CLI(process.argv.slice(2));
+const ni = new NI(cli);
+ni.addHost("localhost");
+ni.addHost("token.localhost");
+ni.start();
