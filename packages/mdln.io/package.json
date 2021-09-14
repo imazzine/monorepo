@@ -38,7 +38,7 @@
   "dependencies": {
     "@formatjs/intl": "^1.14.1",
     "colors": "^1.4.0",
-    "mdln": "^0.0.0-alpha.3",
+    "mdln": "^0.0.0-alpha.4",
     "minimist": "^1.2.5",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v19.3.0"
   },
