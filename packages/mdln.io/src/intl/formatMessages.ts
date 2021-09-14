@@ -1,5 +1,8 @@
 export default function parse(obj: { [key: string]: string }): {
-  [key: string]: { id: string; defaultMessage: string };
+  [key: string]: {
+    id: string;
+    defaultMessage: string;
+  };
 } {
   const res: { [key: string]: { id: string; defaultMessage: string } } = {};
   Object.keys(obj).forEach((name) => {

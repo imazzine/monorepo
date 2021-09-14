@@ -1,8 +1,8 @@
 import { stdout, stderr } from "process";
 import * as minimist from "minimist";
 import { statSync, readFileSync } from "fs";
-import * as colors from "colors";
 import { Node } from "mdln";
+import { intl, messages } from "../../intl";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
 const pth = resolveIoPath("./package.json");
@@ -28,34 +28,6 @@ enum Name {
   NODES = "nodes",
   HOST = "host",
   PORT = "port",
-}
-
-/**
- * CLI commands syntaxes list.
- */
-enum Syntax {
-  HELP = "--help",
-  VERSION = "--version",
-  CERT = "--cert <path>",
-  KEY = "--key <path>",
-  IO = "--io <path>",
-  NODES = "--nodes <path>",
-  HOST = "--host <host>",
-  PORT = "--port <port>",
-}
-
-/**
- * CLI commands descriptions list.
- */
-enum Description {
-  HELP = "display this message",
-  VERSION = "version information",
-  CERT = "HTTPS certificate file absolute <path>",
-  KEY = "HTTPS certificate key file absolute <path>",
-  IO = "IO static absolute <path>",
-  NODES = "Nodes static absolute <path>",
-  HOST = "Web server <host>",
-  PORT = "Web server <port>",
 }
 
 /**
@@ -129,7 +101,11 @@ class CLI extends Node {
       boolean: [Name.HELP, Name.VERSION],
       string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
       unknown: ((arg: string) => {
-        this._error(`unknown option ${colors.bold(arg)}`);
+        this._error(
+          intl.formatMessage(messages.cli_err_unknown_option, {
+            option: arg,
+          }),
+        );
       }) as (arg: string) => boolean,
     });
     if (args[Name.HELP]) {
@@ -150,11 +126,7 @@ class CLI extends Node {
    * Write error message to the stderr and exit with error code 1.
    */
   private _error(err: string): void {
-    let message = `\n${colors.red(`Error: ${err}`)}\n\n`;
-    message += colors.white(
-      `(try ${colors.bold("mdln.io --help")} to get some help)\n\n`,
-    );
-    stderr.write(message);
+    stderr.write(err);
     process.exit(1);
   }
 
@@ -162,37 +134,7 @@ class CLI extends Node {
    * Returns CLI help message.
    */
   private _help(): void {
-    let message = `\n${colors.white("Usage:")} ${colors.bold.green(
-      "mdln.io [options]",
-    )}\n\n`;
-    message += `${colors.white("where")} ${colors.bold.green(
-      "[options]",
-    )} ${colors.white("are:")}\n\n`;
-    message += `\t${colors.bold.green(Syntax.HELP)}\t\t${colors.white(
-      Description.HELP,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.VERSION)}\t${colors.white(
-      Description.VERSION,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.HOST)}\t${colors.white(
-      Description.HOST,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.PORT)}\t${colors.white(
-      Description.PORT,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.CERT)}\t${colors.white(
-      Description.CERT,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.KEY)}\t${colors.white(
-      Description.KEY,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.IO)}\t${colors.white(
-      Description.IO,
-    )}\n`;
-    message += `\t${colors.bold.green(Syntax.NODES)}\t${colors.white(
-      Description.NODES,
-    )}\n\n`;
-    stdout.write(message);
+    stdout.write(intl.formatMessage(messages.cli_help));
     process.exit(0);
   }
 
@@ -200,8 +142,11 @@ class CLI extends Node {
    * Returns CLI version info.
    */
   private _version(): void {
-    const message = `\n${colors.bold.white(`${this.version}`)}\n\n`;
-    stdout.write(message);
+    stdout.write(
+      intl.formatMessage(messages.cli_version, {
+        version: this.version,
+      }),
+    );
     process.exit(0);
   }
 
@@ -211,7 +156,7 @@ class CLI extends Node {
   private _checkPath(value?: string): undefined | string {
     if (typeof value === "string") {
       if (value.length === 0) {
-        this._error(`required ${colors.bold("<path>")} is missing`);
+        this._error(intl.formatMessage(messages.cli_err_req_path_missed));
       } else {
         return value;
       }
@@ -230,7 +175,11 @@ class CLI extends Node {
       exist = false;
     }
     if (!exist) {
-      this._error(`file not found on the given path: ${colors.bold(p)}`);
+      this._error(
+        intl.formatMessage(messages.cli_err_file_not_found, {
+          file: p,
+        }),
+      );
     }
     return p;
   }
@@ -241,9 +190,9 @@ class CLI extends Node {
   private _checkHost(h: string): string {
     if (!IP_regex.test(h) && !HOST_regex.test(h)) {
       this._error(
-        `host should be a valid RFC1123 hostname or an IPv4, not a given: ${colors.bold(
-          h,
-        )}`,
+        intl.formatMessage(messages.cli_err_invalid_host_value, {
+          host: h,
+        }),
       );
     }
     return h;
@@ -255,9 +204,9 @@ class CLI extends Node {
   private _checkPort(p: string): string {
     if (!PORT_regex.test(p)) {
       this._error(
-        `port should be a number between 0 and 65535, not a given: ${colors.bold(
-          p,
-        )}`,
+        intl.formatMessage(messages.cli_err_invalid_port_value, {
+          port: p,
+        }),
       );
     }
     return p;
@@ -286,7 +235,7 @@ class CLI extends Node {
    */
   private _host(host?: string): void {
     if (typeof host === "string" && host.length === 0) {
-      this._error(`required ${colors.bold("<host>")} is missing`);
+      this._error(intl.formatMessage(messages.cli_err_req_host_missed));
     }
     this.#_host = this._checkHost(host || "localhost");
   }
@@ -296,7 +245,7 @@ class CLI extends Node {
    */
   private _port(port?: string): void {
     if (typeof port === "string" && port.length === 0) {
-      this._error(`required ${colors.bold("<port>")} is missing`);
+      this._error(intl.formatMessage(messages.cli_err_req_port_missed));
     }
     this.#_port = parseInt(this._checkPort(port || "8888"));
   }

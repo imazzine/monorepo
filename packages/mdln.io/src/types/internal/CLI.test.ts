@@ -4,11 +4,13 @@ import { stdout, stderr } from "process";
 import { readFileSync } from "fs";
 import * as regular_import from "./CLI";
 import CLI from "./CLI";
+import { intl, messages } from "../../intl";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
 const pth = resolveIoPath("./package.json");
 const cnt = readFileSync(pth).toString();
 const pkg = JSON.parse(cnt) as { version: string };
+
 let cli: CLI;
 let spyExit: jest.SpyInstance<never, [code?: number | undefined]>;
 let spyWrite: jest.SpyInstance<
@@ -84,13 +86,20 @@ describe("CLI", () => {
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_unknown_option, {
+          option: "--throw",
+        }),
+      );
     });
 
     test("--help returns a message", () => {
       expect(() => {
         cli = new CLI(["--help"]);
       }).toThrow("exit 0");
-      expect(spyWrite).toHaveBeenCalled();
+      expect(spyWrite).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_help),
+      );
       expect(spyError).not.toHaveBeenCalled();
     });
 
@@ -98,7 +107,11 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--version"]);
       }).toThrow("exit 0");
-      expect(spyWrite).toHaveBeenCalled();
+      expect(spyWrite).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_version, {
+          version: pkg.version,
+        }),
+      );
       expect(spyError).not.toHaveBeenCalled();
     });
 
@@ -135,7 +148,9 @@ describe("CLI", () => {
         cli = new CLI(["--cert"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_req_path_missed),
+      );
     });
 
     test("throws if --cert <path> is a folder identifier", () => {
@@ -143,7 +158,11 @@ describe("CLI", () => {
         cli = new CLI(["--cert", "/"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_file_not_found, {
+          file: "/",
+        }),
+      );
     });
 
     test("throws if --cert <path> is not an existing file identifier", () => {
@@ -151,7 +170,11 @@ describe("CLI", () => {
         cli = new CLI(["--cert", "/cert.pem"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_file_not_found, {
+          file: "/cert.pem",
+        }),
+      );
     });
 
     test("works if --cert <path> is an existing file identifier", () => {
@@ -174,7 +197,9 @@ describe("CLI", () => {
         cli = new CLI(["--key"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_req_path_missed),
+      );
     });
 
     test("throws if --key <path> is a folder identifier", () => {
@@ -182,7 +207,11 @@ describe("CLI", () => {
         cli = new CLI(["--key", "/"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_file_not_found, {
+          file: "/",
+        }),
+      );
     });
 
     test("throws if --key <path> is not an existing file identifier", () => {
@@ -190,7 +219,11 @@ describe("CLI", () => {
         cli = new CLI(["--key", "/key.pem"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_file_not_found, {
+          file: "/key.pem",
+        }),
+      );
     });
 
     test("works if --key <path> is an existing file identifier", () => {
@@ -213,7 +246,9 @@ describe("CLI", () => {
         cli = new CLI(["--host"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_req_host_missed),
+      );
     });
 
     test("throws if <host> is a wrong string", () => {
@@ -221,7 +256,11 @@ describe("CLI", () => {
         cli = new CLI(["--host", "@!#"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_invalid_host_value, {
+          host: "@!#",
+        }),
+      );
     });
 
     test("works if <host> is a valid hostname", () => {
@@ -257,7 +296,9 @@ describe("CLI", () => {
         cli = new CLI(["--port"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_req_port_missed),
+      );
     });
 
     test("throws if <port> is a string", () => {
@@ -265,7 +306,11 @@ describe("CLI", () => {
         cli = new CLI(["--port", "string"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_invalid_port_value, {
+          port: "string",
+        }),
+      );
     });
 
     test("throws if <port> is a wrong number", () => {
@@ -273,7 +318,11 @@ describe("CLI", () => {
         cli = new CLI(["--port", "111111111111"]);
       }).toThrow("exit 1");
       expect(spyWrite).not.toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalledWith(
+        intl.formatMessage(messages.cli_err_invalid_port_value, {
+          port: "111111111111",
+        }),
+      );
     });
 
     test("works if <port> is a valid number", () => {

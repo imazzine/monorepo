@@ -12,7 +12,7 @@
     "noImplicitReturns": true,
     "stripInternal": true,
     "noEmit": true,
-    "lib": [ "esnext", "dom" ],
+    "lib": [ "dom", "esnext", "esnext.intl" ],
     "resolveJsonModule": true
   }
 }
