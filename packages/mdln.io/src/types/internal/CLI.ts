@@ -1,4 +1,3 @@
-import { stdout, stderr } from "process";
 import * as minimist from "minimist";
 import { statSync, readFileSync } from "fs";
 import { Node } from "mdln";
@@ -126,7 +125,7 @@ class CLI extends Node {
    * Write error message to the stderr and exit with error code 1.
    */
   private _error(err: string): void {
-    stderr.write(err);
+    this.logger.error(err);
     process.exit(1);
   }
 
@@ -134,7 +133,7 @@ class CLI extends Node {
    * Returns CLI help message.
    */
   private _help(): void {
-    stdout.write(intl.formatMessage(messages.cli_help));
+    this.logger.info(intl.formatMessage(messages.cli_help));
     process.exit(0);
   }
 
@@ -142,7 +141,7 @@ class CLI extends Node {
    * Returns CLI version info.
    */
   private _version(): void {
-    stdout.write(
+    this.logger.info(
       intl.formatMessage(messages.cli_version, {
         version: this.version,
       }),
