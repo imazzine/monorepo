@@ -97,7 +97,7 @@ class CLI extends Node {
    */
   private _error(code: Errors, err: string): void {
     stderr.write(err);
-    process.exit(1);
+    process.exit(code);
   }
 
   /**

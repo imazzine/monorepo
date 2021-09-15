@@ -4,6 +4,7 @@ import { stdout, stderr } from "process";
 import { readFileSync } from "fs";
 import * as regular_import from "./CLI";
 import CLI from "./CLI";
+import Errors from "../../enums/Errors";
 import { intl, messages } from "../../intl";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
@@ -32,19 +33,26 @@ let spyError: jest.SpyInstance<
 
 describe("CLI", () => {
   beforeAll(() => {
+    // spyExit = jest.spyOn(process, "exit").mockImplementation((code) => {
+    //   if (code && typeof code === "number" && code > 0) {
+    //     throw new Error("exit 1");
+    //   }
+    //   throw new Error("exit 0");
+    // }) as jest.SpyInstance<never, [code?: number | undefined]>;
+  });
+
+  afterAll(() => {
+    // spyExit.mockRestore();
+  });
+
+  beforeEach(() => {
     spyExit = jest.spyOn(process, "exit").mockImplementation((code) => {
       if (code && typeof code === "number" && code > 0) {
         throw new Error("exit 1");
       }
       throw new Error("exit 0");
     }) as jest.SpyInstance<never, [code?: number | undefined]>;
-  });
 
-  afterAll(() => {
-    spyExit.mockRestore();
-  });
-
-  beforeEach(() => {
     spyWrite = jest.spyOn(stdout, "write").mockImplementation(() => {
       return true;
     }) as jest.SpyInstance<
@@ -68,6 +76,7 @@ describe("CLI", () => {
   });
 
   afterEach(() => {
+    spyExit.mockRestore();
     spyWrite.mockRestore();
     spyError.mockRestore();
   });
@@ -84,6 +93,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--throw", "throw"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_UNKNOWN_OPTION);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
@@ -97,6 +107,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--help"]);
       }).toThrow("exit 0");
+      expect(spyExit).toHaveBeenCalledWith(0);
       expect(spyWrite).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_HELP),
       );
@@ -107,6 +118,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--version"]);
       }).toThrow("exit 0");
+      expect(spyExit).toHaveBeenCalledWith(0);
       expect(spyWrite).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_VERSION, {
           version: pkg.version,
@@ -147,6 +159,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--cert"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_REQ_PATH_MISSED);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_REQ_PATH_MISSED),
@@ -157,6 +170,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--cert", "/"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_FILE_NOT_FOUND);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_FILE_NOT_FOUND, {
@@ -169,6 +183,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--cert", "/cert.pem"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_FILE_NOT_FOUND);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_FILE_NOT_FOUND, {
@@ -196,6 +211,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--key"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_REQ_PATH_MISSED);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_REQ_PATH_MISSED),
@@ -206,6 +222,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--key", "/"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_FILE_NOT_FOUND);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_FILE_NOT_FOUND, {
@@ -218,6 +235,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--key", "/key.pem"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_FILE_NOT_FOUND);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_FILE_NOT_FOUND, {
@@ -245,6 +263,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--host"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_REQ_HOST_MISSED);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_REQ_HOST_MISSED),
@@ -255,6 +274,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--host", "@!#"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_INVALID_HOST_VALUE);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_INVALID_HOST_VALUE, {
@@ -295,6 +315,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--port"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_REQ_PORT_MISSED);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_REQ_PORT_MISSED),
@@ -305,6 +326,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--port", "string"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_INVALID_PORT_VALUE);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_INVALID_PORT_VALUE, {
@@ -317,6 +339,7 @@ describe("CLI", () => {
       expect(() => {
         cli = new CLI(["--port", "111111111111"]);
       }).toThrow("exit 1");
+      expect(spyExit).toHaveBeenCalledWith(Errors.CLI_ERR_INVALID_PORT_VALUE);
       expect(spyWrite).not.toHaveBeenCalled();
       expect(spyError).toHaveBeenCalledWith(
         intl.formatMessage(messages.CLI_ERR_INVALID_PORT_VALUE, {
