@@ -1,0 +1,10 @@
+/packages/**/coverage
+/packages/**/docs
+/packages/**/jest
+/packages/**/lib
+/packages/**/node_modules
+/packages/**/npm-debug.log
+/.vscode
+/cert
+/node_modules
+npm-debug.log
