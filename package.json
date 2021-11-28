@@ -25,14 +25,14 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "lint": "lerna run lint",
-    "docs": "lerna run docs",
-    "compile_cjs": "lerna run compile_cjs",
-    "compile_esm": "lerna run compile_esm",
-    "compile_dts": "lerna run compile_dts",
-    "compile_tst": "lerna run compile_tst",
-    "compile_all": "lerna run compile_all",
-    "test": "lerna run test",
-    "build": "lerna run build"
+    "lint": "lerna run lint --scope @imazzine/mln",
+    "docs": "lerna run docs --scope @imazzine/mln",
+    "compile_cjs": "lerna run compile_cjs --scope @imazzine/mln",
+    "compile_esm": "lerna run compile_esm --scope @imazzine/mln",
+    "compile_dts": "lerna run compile_dts --scope @imazzine/mln",
+    "compile_tst": "lerna run compile_tst --scope @imazzine/mln",
+    "compile_all": "lerna run compile_all --scope @imazzine/mln",
+    "test": "lerna run test --scope @imazzine/mln",
+    "build": "lerna run build --scope @imazzine/mln"
   }
 }
