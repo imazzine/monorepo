@@ -10,6 +10,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
+    "adm-zip": "^0.5.9",
     "coveralls": "^3.1.0",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
@@ -25,14 +26,14 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "lint": "lerna run lint --scope @imazzine/mln",
-    "docs": "lerna run docs --scope @imazzine/mln",
-    "compile_cjs": "lerna run compile_cjs --scope @imazzine/mln",
-    "compile_esm": "lerna run compile_esm --scope @imazzine/mln",
-    "compile_dts": "lerna run compile_dts --scope @imazzine/mln",
-    "compile_tst": "lerna run compile_tst --scope @imazzine/mln",
-    "compile_all": "lerna run compile_all --scope @imazzine/mln",
-    "test": "lerna run test --scope @imazzine/mln",
-    "build": "lerna run build --scope @imazzine/mln"
+    "lint": "lerna run lint --scope @imazzine/mln.fb",
+    "docs": "lerna run docs --scope @imazzine/mln.fb",
+    "compile_cjs": "lerna run compile_cjs --scope @imazzine/mln.fb",
+    "compile_esm": "lerna run compile_esm --scope @imazzine/mln.fb",
+    "compile_dts": "lerna run compile_dts --scope @imazzine/mln.fb",
+    "compile_tst": "lerna run compile_tst --scope @imazzine/mln.fb",
+    "compile_all": "lerna run compile_all --scope @imazzine/mln.fb",
+    "test": "lerna run test --scope @imazzine/mln.fb",
+    "build": "lerna run build --scope @imazzine/mln.fb"
   }
 }

@@ -15,8 +15,11 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "dependencies": { },
+  "dependencies": {
+    "flatbuffers": "^2.0.4"
+  },
   "scripts": {
+    "postinstall": "node ./flatc/unpack.js",
     "lint": "node ../../node_modules/.bin/eslint -c ../../.eslintrc.js --parser-options=tsconfigRootDir:'./tsconfig' 'src/**/*.ts'",
     "docs": "../../node_modules/.bin/typedoc ./src/index.ts --tsconfig ./tsconfig/cjs.json --out ./docs --includes ./",
     "compile_cjs": "tsc -b ./tsconfig/cjs.json",

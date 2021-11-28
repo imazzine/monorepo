@@ -5,9 +5,10 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 'latest',
     sourceType: 'module',
     project: 'tst.json',
+    tsconfigRootDir: './tsconfig',
     ecmaFeatures: {
       impliedStrict: true,
     },

@@ -1,7 +1,7 @@
 /packages/**/cert
 /packages/**/coverage
 /packages/**/docs
-/packages/**/jest
+/packages/**/flatc/flatc
 /packages/**/lib
 /packages/**/node_modules
 /packages/**/npm-debug.log

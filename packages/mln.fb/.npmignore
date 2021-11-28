@@ -1,5 +1,6 @@
 /coverage
 /docs
+/flatc
 /lib/tsconfig
 /lib/tst
 /src
