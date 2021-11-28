@@ -1,3 +1,4 @@
+/packages/**/cert
 /packages/**/coverage
 /packages/**/docs
 /packages/**/jest

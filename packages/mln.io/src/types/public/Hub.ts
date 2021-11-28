@@ -1,4 +1,4 @@
-import { Node } from "mln";
+import { Node } from "@imazzine/mln";
 import CLI from "../internal/CLI";
 import NI from "../internal/NI";
 

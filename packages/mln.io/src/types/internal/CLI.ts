@@ -1,6 +1,6 @@
 import * as minimist from "minimist";
 import { statSync, readFileSync } from "fs";
-import { Node } from "mln";
+import { Node } from "@imazzine/mln";
 import { intl, messages } from "../../intl";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 

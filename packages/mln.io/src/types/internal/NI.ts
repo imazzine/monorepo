@@ -1,4 +1,4 @@
-import { Node } from "mln";
+import { Node } from "@imazzine/mln";
 import { SSLApp, TemplatedApp } from "uWebSockets.js";
 import * as colors from "colors";
 import { stdout, stderr } from "process";
