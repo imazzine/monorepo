@@ -1,7 +1,9 @@
+import { stdout, stderr } from "process";
 import * as minimist from "minimist";
 import { statSync, readFileSync } from "fs";
-import { Node } from "mdln";
+import { Node } from "mln";
 import { intl, messages } from "../../intl";
+import Errors from "../../enums/Errors";
 import resolveIoPath from "../../helpers/paths/resolveIoPath";
 
 const pth = resolveIoPath("./package.json");
@@ -42,7 +44,7 @@ class CLI extends Node {
   #_nodes = "n/a";
 
   /**
-   * mdln.io version. Equal to the package.json.version field value.
+   * mln.io version. Equal to the package.json.version field value.
    */
   get version(): string {
     return this.#_version;
@@ -91,49 +93,18 @@ class CLI extends Node {
   }
 
   /**
-   * CLI constructor.
-   * @param CLI_options Options array (argv formatted)
-   */
-  constructor(CLI_options?: Array<string>) {
-    super();
-    const args = minimist(CLI_options || [], {
-      boolean: [Name.HELP, Name.VERSION],
-      string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
-      unknown: ((arg: string) => {
-        this._error(
-          intl.formatMessage(messages.cli_err_unknown_option, {
-            option: arg,
-          }),
-        );
-      }) as (arg: string) => boolean,
-    });
-    if (args[Name.HELP]) {
-      this._help();
-    } else if (args[Name.VERSION]) {
-      this._version();
-    } else {
-      this._host(args[Name.HOST]);
-      this._port(args[Name.PORT]);
-      this._cert(args[Name.CERT]);
-      this._key(args[Name.KEY]);
-      this.#_io = (args[Name.IO] as string) || resolveIoPath();
-      this.#_nodes = (args[Name.NODES] as string) || resolveIoPath();
-    }
-  }
-
-  /**
    * Write error message to the stderr and exit with error code 1.
    */
-  private _error(err: string): void {
-    this.logger.error(err);
-    process.exit(1);
+  private _error(code: Errors, err: string): void {
+    stderr.write(err);
+    process.exit(code);
   }
 
   /**
    * Returns CLI help message.
    */
   private _help(): void {
-    this.logger.info(intl.formatMessage(messages.cli_help));
+    stdout.write(intl.formatMessage(messages.CLI_HELP));
     process.exit(0);
   }
 
@@ -141,8 +112,8 @@ class CLI extends Node {
    * Returns CLI version info.
    */
   private _version(): void {
-    this.logger.info(
-      intl.formatMessage(messages.cli_version, {
+    stdout.write(
+      intl.formatMessage(messages.CLI_VERSION, {
         version: this.version,
       }),
     );
@@ -155,7 +126,10 @@ class CLI extends Node {
   private _checkPath(value?: string): undefined | string {
     if (typeof value === "string") {
       if (value.length === 0) {
-        this._error(intl.formatMessage(messages.cli_err_req_path_missed));
+        this._error(
+          Errors.CLI_ERR_REQ_PATH_MISSED,
+          intl.formatMessage(messages.CLI_ERR_REQ_PATH_MISSED),
+        );
       } else {
         return value;
       }
@@ -175,7 +149,8 @@ class CLI extends Node {
     }
     if (!exist) {
       this._error(
-        intl.formatMessage(messages.cli_err_file_not_found, {
+        Errors.CLI_ERR_FILE_NOT_FOUND,
+        intl.formatMessage(messages.CLI_ERR_FILE_NOT_FOUND, {
           file: p,
         }),
       );
@@ -189,7 +164,8 @@ class CLI extends Node {
   private _checkHost(h: string): string {
     if (!IP_regex.test(h) && !HOST_regex.test(h)) {
       this._error(
-        intl.formatMessage(messages.cli_err_invalid_host_value, {
+        Errors.CLI_ERR_INVALID_HOST_VALUE,
+        intl.formatMessage(messages.CLI_ERR_INVALID_HOST_VALUE, {
           host: h,
         }),
       );
@@ -203,7 +179,8 @@ class CLI extends Node {
   private _checkPort(p: string): string {
     if (!PORT_regex.test(p)) {
       this._error(
-        intl.formatMessage(messages.cli_err_invalid_port_value, {
+        Errors.CLI_ERR_INVALID_PORT_VALUE,
+        intl.formatMessage(messages.CLI_ERR_INVALID_PORT_VALUE, {
           port: p,
         }),
       );
@@ -214,7 +191,7 @@ class CLI extends Node {
   /**
    * Processing of the cert property.
    */
-  private _cert(pth?: string): void {
+  private _parseCert(pth?: string): void {
     pth = this._checkPath(pth);
     pth = this._checkFile(pth || resolveIoPath("cert/cert.pem"));
     this.#_cert = pth;
@@ -223,7 +200,7 @@ class CLI extends Node {
   /**
    * Processing of the key property.
    */
-  private _key(pth?: string): void {
+  private _parseKey(pth?: string): void {
     pth = this._checkPath(pth);
     pth = this._checkFile(pth || resolveIoPath("cert/key.pem"));
     this.#_key = pth;
@@ -232,9 +209,12 @@ class CLI extends Node {
   /**
    * Processing of the host property.
    */
-  private _host(host?: string): void {
+  private _parseHost(host?: string): void {
     if (typeof host === "string" && host.length === 0) {
-      this._error(intl.formatMessage(messages.cli_err_req_host_missed));
+      this._error(
+        Errors.CLI_ERR_REQ_HOST_MISSED,
+        intl.formatMessage(messages.CLI_ERR_REQ_HOST_MISSED),
+      );
     }
     this.#_host = this._checkHost(host || "localhost");
   }
@@ -242,11 +222,46 @@ class CLI extends Node {
   /**
    * Processing of the port property.
    */
-  private _port(port?: string): void {
+  private _parsePort(port?: string): void {
     if (typeof port === "string" && port.length === 0) {
-      this._error(intl.formatMessage(messages.cli_err_req_port_missed));
+      this._error(
+        Errors.CLI_ERR_REQ_PORT_MISSED,
+        intl.formatMessage(messages.CLI_ERR_REQ_PORT_MISSED),
+      );
     }
     this.#_port = parseInt(this._checkPort(port || "8888"));
+  }
+
+  /**
+   * CLI constructor.
+   * @param CLI_options Options array (argv formatted)
+   */
+  constructor(CLI_options?: Array<string>) {
+    super();
+    const args = minimist(CLI_options || [], {
+      boolean: [Name.HELP, Name.VERSION],
+      string: [Name.CERT, Name.KEY, Name.IO, Name.NODES, Name.HOST, Name.PORT],
+      unknown: ((arg: string) => {
+        this._error(
+          Errors.CLI_ERR_UNKNOWN_OPTION,
+          intl.formatMessage(messages.CLI_ERR_UNKNOWN_OPTION, {
+            option: arg,
+          }),
+        );
+      }) as (arg: string) => boolean,
+    });
+    if (args[Name.HELP]) {
+      this._help();
+    } else if (args[Name.VERSION]) {
+      this._version();
+    } else {
+      this._parseHost(args[Name.HOST]);
+      this._parsePort(args[Name.PORT]);
+      this._parseCert(args[Name.CERT]);
+      this._parseKey(args[Name.KEY]);
+      this.#_io = (args[Name.IO] as string) || resolveIoPath();
+      this.#_nodes = (args[Name.NODES] as string) || resolveIoPath();
+    }
   }
 }
 

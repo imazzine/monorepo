@@ -31,7 +31,7 @@ export namespace events {
   > = new Map();
 
   /**
-   * Returns listeners map for a given mdln-object.
+   * Returns listeners map for a given mln-object.
    */
   export function getListenersMaps(
     node: Listenable,
@@ -65,7 +65,7 @@ export namespace events {
   > = new Map();
 
   /**
-   * Returns ancestors for a given mdln-object.
+   * Returns ancestors for a given mln-object.
    */
   export function getAncestors(node: Listenable): Array<Listenable> {
     const ancestors: Array<Listenable> = [];
@@ -251,7 +251,7 @@ export namespace events {
   }
 
   /**
-   * Class that provides communication layer for the `mdln`-objects. It responds
+   * Class that provides communication layer for the `mln`-objects. It responds
    * for the object's `listen tread`, `unlisten tread` and the `dispatch thread`.
    *
    * As a structure it does not provide any additional public properties.

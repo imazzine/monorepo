@@ -1,5 +1,5 @@
 import { stdout, stderr } from "process";
-import { Logger as BaseLogger, LogLevel } from "mdln";
+import { Logger as BaseLogger, LogLevel } from "mln";
 class Logger extends BaseLogger {
   $log(level: LogLevel, msg: string): boolean {
     if (this.level === LogLevel.NONE) {

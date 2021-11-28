@@ -6,10 +6,10 @@
     "name": "Artem Lytvynov",
     "email": "buntarb@gmail.com"
   },
-  "homepage": "https://github.com/imazzine/mdln",
+  "homepage": "",
   "repository": {
     "type": "git",
-    "url": "git@github.com:imazzine/mdln.git"
+    "url": ""
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

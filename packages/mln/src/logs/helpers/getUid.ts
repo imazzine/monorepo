@@ -20,7 +20,7 @@ export namespace helpers {
    *
    * @example
    * ```TypeScript
-   * import { getUid } from "mdln";
+   * import { getUid } from "mln";
    *
    * console.log(getUid() === getUid());
    * // => false

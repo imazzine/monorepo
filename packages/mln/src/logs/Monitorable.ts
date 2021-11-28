@@ -31,7 +31,7 @@ export namespace logs {
   export const undestructed: Map<string, Monitorable> = new Map();
 
   /**
-   * Class that provides the basic layer for the `mdln`-objects. It responds for
+   * Class that provides the basic layer for the `mln`-objects. It responds for
    * the `construct thread`, object uniqueness and the ability to log
    * associated with the object data. As a structure it hosts a unique object
    * identifier, object creation moment timestamp, object creation stack and
@@ -124,7 +124,7 @@ export namespace logs {
      *
      * @example
      * ```typescript
-     * import { construct, Monitorable } from "mdln";
+     * import { construct, Monitorable } from "mln";
      *
      * class MyClass extends Monitorable {
      *   protected [construct](): void {
@@ -188,7 +188,7 @@ export namespace logs {
      *
      * @example
      * ```typescript
-     * import { destruct, Monitorable } from "mdln";
+     * import { destruct, Monitorable } from "mln";
      *
      * class MyClass extends Monitorable {
      *   protected [destruct](): void {
@@ -232,7 +232,7 @@ export namespace logs {
     }
 
     /**
-     * Constructor of the `mdln`-object. Responds for the `construct thread`
+     * Constructor of the `mln`-object. Responds for the `construct thread`
      * execution and defined in the {@link Monitorable | `Monitorable`} class.
      *
      * Classes that extend {@link Monitorable | `Monitorable`} SHOULD NOT
@@ -299,7 +299,7 @@ export namespace logs {
     }
 
     /**
-     * Destruct the `mdln`-object. If the object hasn't already been destructed, calls
+     * Destruct the `mln`-object. If the object hasn't already been destructed, calls
      * symbolic {@link [destruct] | `[destruct]`} method to start the
      * `destruct thread`. Logs new warning if object has already been destructed.
      */

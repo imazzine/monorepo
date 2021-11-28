@@ -61,7 +61,7 @@ export namespace tree {
   }
 
   /**
-   * Class that provides ability to build trees of `mdln`-objects and traverse
+   * Class that provides ability to build trees of `mln`-objects and traverse
    * through it. It responds for the not modifiable object's `insert tread`,
    * `replace tread` and the `remove thread`.
    *

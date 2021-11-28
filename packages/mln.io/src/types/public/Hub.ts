@@ -1,4 +1,4 @@
-import { Node } from "mdln";
+import { Node } from "mln";
 import CLI from "../internal/CLI";
 import NI from "../internal/NI";
 
