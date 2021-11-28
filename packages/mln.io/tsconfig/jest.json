@@ -1,9 +1,0 @@
-{
-  "extends": "./cjs.json",
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "esnext",
-    "outDir": "../jest"
-  },
-  "exclude": []
-}

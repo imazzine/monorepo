@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import * as process from "process";
 import { readFileSync } from "fs";
-import { Logger, LogLevel, setLogger, setLevel } from "mln";
+import { Logger, LogLevel, setLogger, setLevel } from "mdln";
 import * as regular_import from "./CLI";
 import CLI from "./CLI";
 import { intl, messages } from "../../intl";

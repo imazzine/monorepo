@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": [ "esnext", "esnext.intl" ],
+    "emitDeclarationOnly": false,
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "removeComments": false,
+    "declarationMap": false,
+    "importHelpers": true,
+    "stripInternal": true,
+    "declaration": false,
+    "incremental": true,
+    "composite": false,
+    "sourceMap": true,
+    "strict": true,
+    "noEmit": false
+  },
+  "exclude": ["../packages/**/src/**/*.test.ts"]
+}

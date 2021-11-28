@@ -11,7 +11,7 @@ import { v1, v5 } from "uuid";
 export namespace helpers {
   const ns = "00000000-0000-0000-0000-000000000000";
   const stringsMap: Map<string, string> = new Map();
-  const callbacksMap: Map<(event: Event) => void, string> = new Map();
+  const callbacksMap: Map<(event: unknown) => void, string> = new Map();
 
   /**
    * Returns random session unique UUID-like string if `value` is not specified.

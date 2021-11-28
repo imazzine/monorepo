@@ -20,13 +20,17 @@
     "throttle-debounce": "^3.0.1"
   },
   "scripts": {
-    "lint": "node ../../node_modules/.bin/eslint -c ./.eslintrc.js 'src/**/*.ts'",
-    "compile": "rm -rf lib && tsc -b ./tsconfig/cjs.json ./tsconfig/esm.json ./tsconfig/types.json && mv lib/types/src/* lib/types/ && rm -d lib/types/src && mv lib/cjs/src/* lib/cjs/ && rm -d lib/cjs/src && mv lib/esm/src/* lib/esm/ && rm -d lib/esm/src && find ./lib -type f -name *.tsbuildinfo -delete && find ./lib -type d -name tsconfig -delete",
-    "test": "tsc -b ./tsconfig/jest.json && ../../node_modules/.bin/jest --config ./.jestrc.js",
+    "lint": "node ../../node_modules/.bin/eslint -c ../../.eslintrc.js --parser-options=tsconfigRootDir:'./tsconfig' 'src/**/*.ts'",
     "docs": "../../node_modules/.bin/typedoc ./src/index.ts --out ./docs --includes ./",
-    "build": "npm run lint && npm run test -- --coverage && npm run compile && npm run docs"
+    "compile_cjs": "tsc -b ./tsconfig/cjs.json",
+    "compile_esm": "tsc -b ./tsconfig/esm.json",
+    "compile_dts": "tsc -b ./tsconfig/dts.json",
+    "compile_tst": "tsc -b ./tsconfig/tst.json",
+    "compile_all": "npm run compile_cjs && npm run compile_esm && npm run compile_dts",
+    "test": "npm run compile_tst && ../../node_modules/.bin/jest --config ../../.jestrc.js --roots ./packages/mln/lib/tst",
+    "build": "npm run lint && npm run test -- --coverage && npm run compile_all && npm run docs"
   },
-  "types": "lib/types/index.d.ts",
+  "types": "lib/dts/index.d.ts",
   "module": "lib/esm/index.js",
   "main": "lib/cjs/index.js"
 }

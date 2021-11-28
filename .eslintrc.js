@@ -1,17 +1,16 @@
 module.exports = {
   ignorePatterns: [
     '*.js',
-    'lib/**/*.d.ts'
+    '*.d.ts'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
+    project: 'tst.json',
     ecmaFeatures: {
       impliedStrict: true,
     },
-    project: 'tsconfig.json',
-    tsconfigRootDir: '.',
   },
   extends: [
     'eslint:recommended',
@@ -24,5 +23,9 @@ module.exports = {
     'filenames',
     'prettier',
   ],
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "@typescript-eslint/no-explicit-any": "error"
+  },
 };

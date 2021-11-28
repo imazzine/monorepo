@@ -1,9 +1,9 @@
 {
-  "extends": "../../../tsconfig/cjs.json",
+  "extends": "../../../tsconfig/tst.json",
   "include": ["../src/**/*.ts"],
   "compilerOptions": {
     "rootDir": "../src",
     "baseUrl": "../src",
-    "outDir": "../lib/cjs"
+    "outDir": "../lib/tst"
   }
 }
