@@ -1,5 +1,4 @@
 namespace logs;
-
 table Monitorable {
-  uid: string;
+  uid: string (required, id);
 }
