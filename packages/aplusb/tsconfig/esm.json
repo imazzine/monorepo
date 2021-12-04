@@ -4,6 +4,8 @@
   "compilerOptions": {
     "rootDir": "../src",
     "baseUrl": "../src",
-    "outDir": "../lib/esm"
+    "outDir": "../lib/esm",
+    "lib": [ "dom", "esnext", "esnext.intl" ],
+    "allowJs": true
   }
 }

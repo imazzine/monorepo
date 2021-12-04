@@ -4,6 +4,8 @@
   "compilerOptions": {
     "rootDir": "../src",
     "baseUrl": "../src",
-    "outDir": "../lib/tst"
+    "outDir": "../lib/tst",
+    "lib": [ "dom", "esnext", "esnext.intl" ],
+    "allowJs": true
   }
 }

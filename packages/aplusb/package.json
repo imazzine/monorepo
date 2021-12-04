@@ -15,17 +15,28 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "dependencies": { },
+  "gypfile": true,
+  "dependencies": {
+    "@assemblyscript/loader": "^0.19.20",
+    "bindings": "^1.5.0",
+    "table": "^6.7.5"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.19.20"
+  },
   "scripts": {
     "lint": "node ../../node_modules/.bin/eslint -c ../../.eslintrc.js --fix --parser-options=tsconfigRootDir:'./tsconfig' 'src/**/*.ts'",
     "docs": "../../node_modules/.bin/typedoc ./src/index.ts --tsconfig ./tsconfig/cjs.json --out ./docs --includes ./",
+    "compile_asc": "asc \"./src/assembly.as\" --exportRuntime --extension as --target release",
+    "compile_gyp": "node-gyp configure --python python3 && node-gyp build",
     "compile_cjs": "tsc -b ./tsconfig/cjs.json",
     "compile_esm": "tsc -b ./tsconfig/esm.json",
     "compile_dts": "tsc -b ./tsconfig/dts.json",
     "compile_tst": "tsc -b ./tsconfig/tst.json",
     "compile_all": "npm run compile_cjs && npm run compile_esm && npm run compile_dts",
     "test": "../../node_modules/.bin/jest --config ../../.jestrc.js --roots ./packages/aplusb/lib/tst --coverageDirectory ./packages/aplusb/coverage",
-    "build": "npm run lint && npm run compile_tst && npm run test -- --coverage && npm run docs && npm run compile_all"
+    "build": "npm run lint && npm run compile_tst && npm run test -- --coverage && npm run docs && npm run compile_all",
+    "exec": "node ./lib/cjs/index.js"
   },
   "types": "lib/dts/index.d.ts",
   "module": "lib/esm/index.js",

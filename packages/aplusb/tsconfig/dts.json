@@ -5,6 +5,8 @@
     "rootDir": "../src",
     "baseUrl": "../src",
     "outDir": "../lib/dts",
-    "declarationDir": "../lib/dts"
+    "declarationDir": "../lib/dts",
+    "lib": [ "dom", "esnext", "esnext.intl" ],
+    "allowJs": true
   }
 }
