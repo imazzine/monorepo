@@ -1,0 +1,33 @@
+{
+  "name": "@imazzine/aplusb",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Artem Lytvynov",
+    "email": "buntarb@gmail.com"
+  },
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:imazzine/monorepo.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dependencies": { },
+  "scripts": {
+    "lint": "node ../../node_modules/.bin/eslint -c ../../.eslintrc.js --fix --parser-options=tsconfigRootDir:'./tsconfig' 'src/**/*.ts'",
+    "docs": "../../node_modules/.bin/typedoc ./src/index.ts --tsconfig ./tsconfig/cjs.json --out ./docs --includes ./",
+    "compile_cjs": "tsc -b ./tsconfig/cjs.json",
+    "compile_esm": "tsc -b ./tsconfig/esm.json",
+    "compile_dts": "tsc -b ./tsconfig/dts.json",
+    "compile_tst": "tsc -b ./tsconfig/tst.json",
+    "compile_all": "npm run compile_cjs && npm run compile_esm && npm run compile_dts",
+    "test": "../../node_modules/.bin/jest --config ../../.jestrc.js --roots ./packages/aplusb/lib/tst --coverageDirectory ./packages/aplusb/coverage",
+    "build": "npm run lint && npm run compile_tst && npm run test -- --coverage && npm run docs && npm run compile_all"
+  },
+  "types": "lib/dts/index.d.ts",
+  "module": "lib/esm/index.js",
+  "main": "lib/cjs/index.js"
+}

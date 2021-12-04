@@ -26,14 +26,14 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "lint": "lerna run lint --scope @imazzine/mln.fb",
-    "docs": "lerna run docs --scope @imazzine/mln.fb",
-    "compile_cjs": "lerna run compile_cjs --scope @imazzine/mln.fb",
-    "compile_esm": "lerna run compile_esm --scope @imazzine/mln.fb",
-    "compile_dts": "lerna run compile_dts --scope @imazzine/mln.fb",
-    "compile_tst": "lerna run compile_tst --scope @imazzine/mln.fb",
-    "compile_all": "lerna run compile_all --scope @imazzine/mln.fb",
-    "test": "lerna run test --scope @imazzine/mln.fb",
-    "build": "lerna run build --scope @imazzine/mln.fb"
+    "lint": "lerna run lint --scope @imazzine/aplusb",
+    "docs": "lerna run docs --scope @imazzine/aplusb",
+    "compile_cjs": "lerna run compile_cjs --scope @imazzine/aplusb",
+    "compile_esm": "lerna run compile_esm --scope @imazzine/aplusb",
+    "compile_dts": "lerna run compile_dts --scope @imazzine/aplusb",
+    "compile_tst": "lerna run compile_tst --scope @imazzine/aplusb",
+    "compile_all": "lerna run compile_all --scope @imazzine/aplusb",
+    "test": "lerna run test --scope @imazzine/aplusb",
+    "build": "lerna run build --scope @imazzine/aplusb"
   }
 }
